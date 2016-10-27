@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
     
-    var todoList = [String]()
+    var todoList = [MyTodo]()
     @IBOutlet weak var tableView: UITableView!
     
     
@@ -30,14 +30,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             // OKボタンが押された時の処理
             if let textField = alertController.textFields?.first {
                 // TODOの配列に入力した値を挿入。銭湯に挿入する。
-                self.todoList.insert(textField.text!, at: 0)
+                let myTodo = MyTodo()
+                myTodo.todoTitle = textField.text!
+                self.todoList.insert(myTodo, at: 0)
                 
                 // テーブルに行が追加されたことをテーブルに通知
                 self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: UITableViewRowAnimation.right)
                 
                 // 保存
+                let data :NSData = NSKeyedArchiver.archivedData(withRootObject: self.todoList) as NSData
+                
                 let userDefaults = UserDefaults.standard
-                userDefaults.set(self.todoList, forKey: "todoList")
+                userDefaults.set(data, forKey: "todoList")
                 //userDefaults.set(textField.text, forKey: "todoList")
                 userDefaults.synchronize()
             }
@@ -70,9 +74,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         // storyboardで指定したtodoCell識別子を利用して再利用可能なセルを取得する
         let cell = tableView.dequeueReusableCell(withIdentifier: "todoCell", for: indexPath as IndexPath)
         // 行番号に合ったToDoのタイトルを取得
-        let todoTitle = todoList[indexPath.row]
+        let MyTodo = todoList[indexPath.row]
         // セルのラベルにToDoのタイトルをセット
-        cell.textLabel!.text = todoTitle
+        cell.textLabel!.text = MyTodo.todoTitle
         return cell
     }
     
@@ -82,8 +86,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         // 保存していたtodoListの取得
         //let userDefaults = UserDefaults.init()
         let userDefaults = UserDefaults.standard
-        if let storedTodoList = userDefaults.array(forKey: "todoList") as? [String] {
-            todoList.append(contentsOf: storedTodoList)
+        if let todoListData = userDefaults.object(forKey: "todoList") as? NSData {
+            if let storedTodoList = NSKeyedUnarchiver.unarchiveObject(with: todoListData as Data) as? [MyTodo] {
+                todoList.append(contentsOf: storedTodoList)
+            }
         }
     }
 
