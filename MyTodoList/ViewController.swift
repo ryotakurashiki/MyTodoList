@@ -48,13 +48,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         present(alertController, animated: true, completion: nil)
     }
     
-    //テーブルの要素数を設定する ※必須
+    //テーブルの要素数を設定する（sectionの数） ※必須
     private func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 10
+        return 1
     }
     
     //テーブルの行数を設定する ※必須
-    //func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return todoList.count
     }
