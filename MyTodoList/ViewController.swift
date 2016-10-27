@@ -107,6 +107,29 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         userDefaults.synchronize()
     }
     
+    //セルが編集可能かどうか返す
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    //セルを削除した時の処理
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        //削除処理化どうか
+        if editingStyle == .delete {
+            //todoリストから削除
+            todoList.remove(at: indexPath.row)
+            //セルを削除
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            //データ保存
+            //NSData型にシリアライズする
+            let data :NSData = NSKeyedArchiver.archivedData(withRootObject: self.todoList) as NSData
+            let userDefaults = UserDefaults.standard
+            userDefaults.set(data, forKey: "todoList")
+            //userDefaults.set(textField.text, forKey: "todoList")
+            userDefaults.synchronize()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
