@@ -13,6 +13,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var todoList = [String]()
     @IBOutlet weak var tableView: UITableView!
     
+    
     @IBAction func tapAddButton(_ sender: AnyObject) {
         // アラートダイアログを生成
         let alertController = UIAlertController(
@@ -33,6 +34,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 
                 // テーブルに行が追加されたことをテーブルに通知
                 self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: UITableViewRowAnimation.right)
+                
+                // 保存
+                let userDefaults = UserDefaults.standard
+                userDefaults.set(self.todoList, forKey: "todoList")
+                //userDefaults.set(textField.text, forKey: "todoList")
+                userDefaults.synchronize()
             }
         }
         
@@ -71,7 +78,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        // 保存していたtodoListの取得
+        //let userDefaults = UserDefaults.init()
+        let userDefaults = UserDefaults.standard
+        if let storedTodoList = userDefaults.array(forKey: "todoList") as? [String] {
+            todoList.append(contentsOf: storedTodoList)
+        }
     }
 
     override func didReceiveMemoryWarning() {
