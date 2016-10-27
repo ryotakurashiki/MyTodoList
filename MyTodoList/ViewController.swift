@@ -91,9 +91,27 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    
 
+}
 
+class MyTodo: NSObject, NSCoding {
+    var todoTitle :String?
+    var todoDone :Bool = false
+    
+    override init(){
+    }
+    
+    // NSCodingデシリアライズ
+    required init?(coder aDecoder: NSCoder) {
+        todoTitle = aDecoder.decodeObject(forKey: "todoTitle") as? String
+        todoDone = aDecoder.decodeBool(forKey: "todoDone")
+    }
+    
+    //シリアライズ
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(todoTitle, forKey: "todoTitle")
+        aCoder.encode(todoDone, forKey: "todoDone")
+    }
+        
 }
 
