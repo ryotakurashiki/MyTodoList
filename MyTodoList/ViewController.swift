@@ -73,11 +73,38 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
         // storyboardで指定したtodoCell識別子を利用して再利用可能なセルを取得する
         let cell = tableView.dequeueReusableCell(withIdentifier: "todoCell", for: indexPath as IndexPath)
-        // 行番号に合ったToDoのタイトルを取得
-        let MyTodo = todoList[indexPath.row]
+        // 行番号に合ったToDoを取得
+        let myTodo = todoList[indexPath.row]
         // セルのラベルにToDoのタイトルをセット
-        cell.textLabel!.text = MyTodo.todoTitle
+        cell.textLabel!.text = myTodo.todoTitle
+        // false, trueの確認
+        if myTodo.todoDone{
+            cell.accessoryType = UITableViewCellAccessoryType.checkmark
+        } else {
+            cell.accessoryType = UITableViewCellAccessoryType.none
+        }
         return cell
+    }
+    
+    //セルをタップしたときの処理
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath:IndexPath) {
+        print("hogehoeg")
+        let todo = todoList[indexPath.row]
+        if todo.todoDone {
+            todo.todoDone = false
+        } else {
+            todo.todoDone = true
+        }
+        //セルの状態を変更
+        //self.tableView.reloadData()
+        self.tableView.reloadRows(at: [indexPath], with: UITableViewRowAnimation.fade)
+        
+        // 保存
+        let data :NSData = NSKeyedArchiver.archivedData(withRootObject: self.todoList) as NSData
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(data, forKey: "todoList")
+        //userDefaults.set(textField.text, forKey: "todoList")
+        userDefaults.synchronize()
     }
     
     override func viewDidLoad() {
